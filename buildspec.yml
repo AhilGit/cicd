@@ -1,21 +1,23 @@
 version: 0.2
 
-phases: 
-    install:
-        commands:
-            - echo "installing NGINX"
-            - sudo apt-get update
-            - sudo apt-get install nginx -y
-
-    build:
-        commands:
-            - echo "This is the build phase"
-            - echo Build started on 'date'
-            - cp index.html /var/www/html/
-    post_build:
-        commands:
-            - echo "This is the post build phase"
-            
+phases:
+  install:
+    runtime-versions:
+      nodejs: 16  # Optional: Added for flexibility if Node.js is needed later
+    commands:
+      - echo "Installing NGINX"
+      - sudo apt-get update
+      - sudo apt-get install nginx -y
+  build:
+    commands:
+      - echo "This is the build phase"
+      - echo Build started on $(date)
+      - sudo chown $USER:$USER /var/www/html
+      - cp index.html /var/www/html/
+  post_build:
+    commands:
+      - echo "This is the post build phase"
+      - sudo systemctl start nginx  # Optional: Start NGINX for testing
 artifacts:
   files:
-    - /var/www/html/index.html        
+    - index.html  # Reference the source file in the repository root
